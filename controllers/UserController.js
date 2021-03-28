@@ -30,7 +30,7 @@ class UserController {
   async create(req, res) {
     const { email, name, password } = req.body;
 
-    if (email == undefined) {
+    if (email == undefined || email == '' || email == ' ') {
       res.status(400);
       res.json({ err: 'O e-mail é inválido!' });
       return;
@@ -103,17 +103,24 @@ class UserController {
 
   async login(req, res) {
     let { email, password } = req.body;
+
     let user = await User.findByEmail(email);
+
     if (user != undefined) {
-      let result = await bcrypt.compare(password, user.password);
-      if (result) {
-        var token = jwt.sign({ email: user.email, role: user.role }, secret);
+      let resultado = await bcrypt.compare(password, user.password);
+
+      if (resultado) {
+        let token = jwt.sign({ email: user.email, role: user.role }, secret);
+
+        res.status(200);
         res.json({ token: token });
       } else {
-        res.status(406).send('Senha incorreta.');
+        res.status(406);
+        res.json({ err: 'Senha incorreta' });
       }
     } else {
-      res.json({ status: false });
+      res.status(406);
+      res.json({ status: false, err: 'O usuário não existe!' });
     }
   }
 }

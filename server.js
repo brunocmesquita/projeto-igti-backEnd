@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 var router = require('./routes/routes');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 // load config
 dotenv.config({ path: './config/config.env' });
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 8687;
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use('/', router);
 
